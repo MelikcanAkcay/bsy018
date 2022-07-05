@@ -1,5 +1,7 @@
 /*
+
  max7219.c
+
  Raspberry Pi driving the Max7219
  to compile : gcc max7219.c -o max7219 -lwiringPi
 */
@@ -9,16 +11,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-
 // define our pins :
-
-#define DATA 27
-#define CLOCK 29
-#define LOAD 28
+#define DATA        27 // GPIO 17 (WiringPi pin num 0)  header pin 11
+#define CLOCK       29 // GPIO 22 (WiringPi pin num 3)   header pin 15
+#define LOAD        28 // GPIO 23 (WiringPi pin num 4)   header pin 16
 
 
 // The Max7219 Registers :
-
 #define DECODE_MODE   0x09
 #define INTENSITY     0x0a
 #define SCAN_LIMIT    0x0b
@@ -30,19 +29,24 @@
 static void Send16bits (unsigned short output)
 {
     unsigned char i;
+
     for (i=16; i>0; i--)
     {
         unsigned short mask = 1 << (i - 1); // calculate bitmask
+
         digitalWrite(CLOCK, 0);  // set clock to 0
 
         // Send one bit on the data pin
-        if (output & mask){
-            digitalWrite(DATA, 1);
-        } else{digitalWrite(DATA, 0);}
 
+        if (output & mask)
+            digitalWrite(DATA, 1);
+        else
+            digitalWrite(DATA, 0);
 
         digitalWrite(CLOCK, 1);  // set clock to 1
+
     }
+
 }
 
 
@@ -59,15 +63,15 @@ static void MAX7219Send (unsigned char reg_number, unsigned char dataout)
 
 
 
-void startup()
+void *startup()
 {
     printf ("\n\nRaspberry Pi Max7219 Test using WiringPi\n\n");
+
     if (wiringPiSetup () == -1) exit (1) ;
     //We need 3 output pins to control the Max7219: Data, Clock and Load
     pinMode(DATA, OUTPUT);
     pinMode(CLOCK, OUTPUT);
     pinMode(LOAD, OUTPUT);
-
     MAX7219Send(SCAN_LIMIT, 7);     // set up to scan all eight digits
 
 
@@ -76,11 +80,10 @@ void startup()
  BCD mode on :  0 to 15 =  0 to 9, -, E, H, L, P, and ' '
 */
 
-    MAX7219Send(SHUTDOWN, 0);
     MAX7219Send(DECODE_MODE, 1);   // Set BCD decode mode on
     MAX7219Send(DISPLAY_TEST, 0);  // Disable test mode
     MAX7219Send(INTENSITY, 1);     // set brightness 0 to 15
     MAX7219Send(SHUTDOWN, 0);      // come out of shutdown mode	/ turn on the digits
-    //MAX7219Send(0,2); 		 // displays the number 6 on digit 1
-    return;
+    MAX7219Send(1,6); 		 // displays the number 6 on digit 1
+
 }

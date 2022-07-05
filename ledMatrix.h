@@ -1,1 +1,1 @@
-void startup();
+void *startup();
