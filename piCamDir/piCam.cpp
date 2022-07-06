@@ -18,6 +18,8 @@ bool picam_photo (const char * filename)
         return false; // could not write the file
     return true;
 }
-int main(){
-    picam_photo("test.jpg");
+int main(int argc, char* argv[]){
+    std::string jpg = ".jpg";
+    const char* fullName = (argv[1] + jpg).c_str();
+    picam_photo(fullName);
 }

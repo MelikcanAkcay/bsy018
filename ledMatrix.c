@@ -1,11 +1,3 @@
-/*
-
- max7219.c
-
- Raspberry Pi driving the Max7219
- to compile : gcc max7219.c -o max7219 -lwiringPi
-*/
-
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,7 +64,7 @@ void *startup()
     pinMode(DATA, OUTPUT);
     pinMode(CLOCK, OUTPUT);
     pinMode(LOAD, OUTPUT);
-    MAX7219Send(SCAN_LIMIT, 7);     // set up to scan all eight digits
+    //MAX7219Send(SCAN_LIMIT, 7);     // set up to scan all eight digits
 
 
 /*
@@ -80,10 +72,12 @@ void *startup()
  BCD mode on :  0 to 15 =  0 to 9, -, E, H, L, P, and ' '
 */
 
-    MAX7219Send(DECODE_MODE, 1);   // Set BCD decode mode on
-    MAX7219Send(DISPLAY_TEST, 0);  // Disable test mode
-    MAX7219Send(INTENSITY, 1);     // set brightness 0 to 15
-    MAX7219Send(SHUTDOWN, 0);      // come out of shutdown mode	/ turn on the digits
-    MAX7219Send(1,6); 		 // displays the number 6 on digit 1
+    MAX7219Send(SCAN_LIMIT, 7);
+    MAX7219Send(DECODE_MODE, 0);
+    MAX7219Send(DISPLAY_TEST, 0);
+    MAX7219Send(INTENSITY, 1);
+    MAX7219Send(SHUTDOWN, 0);
+    MAX7219Send(1,0x22);
+    printf("ende");
 
 }

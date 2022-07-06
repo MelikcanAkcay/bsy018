@@ -25,9 +25,10 @@ void *measureLux(){
     int i = 0, stelle = 0;
     long avgArr[3] = {0, 0, 0};
 
-    while(i<=3){
+    while(i<=5){
         int handle = wiringPiI2CSetup(0x23);
         wiringPiI2CWrite(handle, 0x10);
+        sleep(1);
         int word = wiringPiI2CReadReg16(handle, 0x00);
         lux = ((word & 0xff00) >> 8) | ((word & 0x00ff) << 8);
         stelle = i%3;
@@ -36,6 +37,7 @@ void *measureLux(){
         printf("Aktuelle Beleuchtungsstaerke in Lux:%d\n", lux);
         printf("durchschnittliche Beleuchtungsstaerke in Lux:%d\n", avg(avgArr));
         i++;
+        sleep(10);
     }
     if(avg(avgArr) > 2000){
         return (void*) plus;
