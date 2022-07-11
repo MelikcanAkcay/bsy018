@@ -8,24 +8,16 @@
 
 #include </home/bsy018/project/bsy018/luxSensor.h>
 
-#define LIMIT 1000
-
-enum led{
-    plus = 1,
-    minus = 0
-};
-
 long avg(long avgArr[]){
     long avg = (avgArr[0] + avgArr[1] + avgArr[2]) / 3;
     return avg;
 }
 
-void *measureLux(){
-    int lux = 0;
-    int i = 0, stelle = 0;
+void *measureLux(void* arg){
+    int lux = 0, limit = *(int*) arg, i = 0, stelle = 0;
     long avgArr[3] = {0, 0, 0};
 
-    while(i<=5){
+    while(i<=2){
         int handle = wiringPiI2CSetup(0x23);
         wiringPiI2CWrite(handle, 0x10);
         sleep(1);
@@ -34,12 +26,13 @@ void *measureLux(){
         stelle = i%3;
         avgArr[stelle] = lux;
 
-        printf("Aktuelle Beleuchtungsstaerke in Lux:%d\n", lux);
-        printf("durchschnittliche Beleuchtungsstaerke in Lux:%d\n", avg(avgArr));
+        printf("Aktuelle Beleuchtungsstaerke: %d\n", lux);
+        printf("durchschnittliche Beleuchtungsstaerke: %d\n", avg(avgArr));
         i++;
         sleep(10);
     }
-    if(avg(avgArr) > 2000){
+
+    if(avg(avgArr) > limit){
         return (void*) plus;
     } else{ return (void*) minus;}
 }

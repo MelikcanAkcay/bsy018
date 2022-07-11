@@ -1,5 +1,6 @@
 #include <wiringPi.h>
 #include <stdio.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -52,14 +53,52 @@ static void MAX7219Send (unsigned char reg_number, unsigned char dataout)
     digitalWrite(LOAD, 1);  // set LOAD 1 to finish
 }
 
+void emptyDisplay(){
+    MAX7219Send(1,0x00);
+    MAX7219Send(2,0x00);
+    MAX7219Send(3,0x00);
+    MAX7219Send(4,0x00);
+    MAX7219Send(5,0x00);
+    MAX7219Send(6,0x00);
+    MAX7219Send(7,0x00);
+    MAX7219Send(8,0x00);
+}
+
+void minus(){
+    MAX7219Send(1,0x18);
+    MAX7219Send(2,0x18);
+    MAX7219Send(3,0x18);
+    MAX7219Send(4,0x18);
+    MAX7219Send(5,0x18);
+    MAX7219Send(6,0x18);
+    MAX7219Send(7,0x18);
+    MAX7219Send(8,0x18);
+}
+
+void plus(){
+    MAX7219Send(1,0x18);
+    MAX7219Send(2,0x18);
+    MAX7219Send(3,0x18);
+    MAX7219Send(4,0xff);
+    MAX7219Send(5,0xff);
+    MAX7219Send(6,0x18);
+    MAX7219Send(7,0x18);
+    MAX7219Send(8,0x18);
+}
 
 
 
-void *startup()
+
+void *startup(void* arg)
 {
+    int op = *(int*) arg;
+    printf("%d", op);
     printf ("\n\nRaspberry Pi Max7219 Test using WiringPi\n\n");
 
-    if (wiringPiSetup () == -1) exit (1) ;
+    if (wiringPiSetup () == -1){
+        printf("error  wiringpi");
+        pthread_exit(NULL);
+    }
     //We need 3 output pins to control the Max7219: Data, Clock and Load
     pinMode(DATA, OUTPUT);
     pinMode(CLOCK, OUTPUT);
@@ -75,9 +114,13 @@ void *startup()
     MAX7219Send(SCAN_LIMIT, 7);
     MAX7219Send(DECODE_MODE, 0);
     MAX7219Send(DISPLAY_TEST, 0);
-    MAX7219Send(INTENSITY, 1);
-    MAX7219Send(SHUTDOWN, 0);
-    MAX7219Send(1,0x22);
-    printf("ende");
+    MAX7219Send(INTENSITY, 8);
+    MAX7219Send(SHUTDOWN, 1);
+    emptyDisplay();
+    printf("hello");
+    if(op == 0){
+        minus();
+    } else plus();
 
+    pthread_exit(NULL);
 }
