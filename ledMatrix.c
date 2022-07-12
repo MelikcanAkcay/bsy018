@@ -92,8 +92,6 @@ void plus(){
 void *startup(void* arg)
 {
     int op = *(int*) arg;
-    printf("%d", op);
-    printf ("\n\nRaspberry Pi Max7219 Test using WiringPi\n\n");
 
     if (wiringPiSetup () == -1){
         printf("error  wiringpi");
@@ -117,10 +115,13 @@ void *startup(void* arg)
     MAX7219Send(INTENSITY, 8);
     MAX7219Send(SHUTDOWN, 1);
     emptyDisplay();
-    printf("hello");
     if(op == 0){
+        printf ("\nPrinting %d\n\n", 0);
         minus();
-    } else plus();
+    } else{
+        printf ("\nPrinting %d\n\n", 1);
+        plus();
+    }
 
     pthread_exit(NULL);
 }

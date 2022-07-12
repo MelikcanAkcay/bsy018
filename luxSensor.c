@@ -14,8 +14,9 @@ long avg(long avgArr[]){
 }
 
 void *measureLux(void* arg){
-    int lux = 0, limit = *(int*) arg, i = 0, stelle = 0;
-    long avgArr[3] = {0, 0, 0};
+
+    ret_t* res = (ret_t*) arg;
+    int lux = 0, i = 0, stelle = 0;
 
     while(i<=2){
         int handle = wiringPiI2CSetup(0x23);
@@ -24,15 +25,22 @@ void *measureLux(void* arg){
         int word = wiringPiI2CReadReg16(handle, 0x00);
         lux = ((word & 0xff00) >> 8) | ((word & 0x00ff) << 8);
         stelle = i%3;
-        avgArr[stelle] = lux;
+        res->arr[stelle] = lux;
 
         printf("Aktuelle Beleuchtungsstaerke: %d\n", lux);
-        printf("durchschnittliche Beleuchtungsstaerke: %d\n", avg(avgArr));
+        printf("durchschnittliche Beleuchtungsstaerke: %d\n", avg(res->arr));
         i++;
         sleep(10);
     }
 
-    if(avg(avgArr) > limit){
-        return (void*) plus;
-    } else{ return (void*) minus;}
+    if(avg(res->arr) > res->limit){
+        res->op_symbol = plus;
+    } else{
+        res->op_symbol = minus;
+    }
+
+    printf("\nNeues Limit: %d Lux\n", avg(res->arr));
+    res->limit = avg(res->arr);
+
+    return (void*)res;
 }
