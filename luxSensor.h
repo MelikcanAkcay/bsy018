@@ -5,7 +5,7 @@ enum led{
 
 typedef struct ret{
     int op_symbol;
-    long arr[3];
+    int arr[3];
     int limit;
 }ret_t;
 

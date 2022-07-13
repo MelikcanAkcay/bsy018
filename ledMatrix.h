@@ -1,1 +1,1 @@
-void *startup(void* arg);
+void *MAXLedMatrix(void* arg);
