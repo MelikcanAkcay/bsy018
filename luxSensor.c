@@ -52,8 +52,10 @@ void *measureLux(void* arg){
         res->op_symbol = minus;                             //Setze op_symbol minus(0)
     }
 
+    /*
     printf("\nNeues Limit: %d Lux\n", avg(res->arr));       //Gebe das neue Limit aus
     res->limit = avg(res->arr);                             //Setze das neue Limit
+     */
 
     return (void*)res;                                      //Gebe res in form von einem void* wieder
 }

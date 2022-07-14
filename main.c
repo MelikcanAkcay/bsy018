@@ -8,15 +8,14 @@
 #include "ledMatrix.h"
 #include "piCam.h"
 
-#define RUNTIME 60                          //die zeit wie lange das Programm läuft in Sekunden
-#define LUXLIMIT 3000                       //Lux Limit um es einfacher einstellen zu koennen
+#define RUNTIME 600                          //die zeit wie lange das Programm läuft in Sekunden
+#define LUXLIMIT 3700                       //Lux Limit um es einfacher einstellen zu koennen
 
 int main(void){
     pthread_t threads[3] = {0, 1, 2};       //erstelle 3 threads
     time_t end, start;
 
     int lastOp = plus;                     //letztes Zeichen was auf der LED Matrix angezeigt wurde
-    void *luxLim = (void*) LUXLIMIT;        //Lux limit ab dem das Zeichen umspringt
     void *retval;                           //1 wenn lux > luxLim || 0 wenn lux < luxLim
 
     ret_t* res = malloc(sizeof(ret_t));     //Erstelle ein typ res der form ret_t
